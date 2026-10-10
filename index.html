@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una misión para Rafael 🕷️</title>
+
+<style>
+:root {
+  --rojo: #f32d46;
+  --azul: #267bff;
+  --fondo: #050711;
+  --blanco: #f8f9ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fondo);
+  color: var(--blanco);
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.pantalla {
+  display: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 32px 20px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 20% 20%, #123a704d, transparent 45%),
+    radial-gradient(ellipse at 80% 75%, #a30d2540, transparent 45%),
+    linear-gradient(145deg, #050711, #111326 55%, #080811);
+}
+
+.pantalla.activa {
+  display: flex;
+  animation: aparecer 1s ease both;
+}
+
+h1, h2, p {
+  position: relative;
+  z-index: 1;
+}
+
+h1 {
+  font-size: clamp(38px, 9vw, 76px);
+  margin: 12px 0;
+  letter-spacing: 5px;
+  text-shadow: 0 0 22px #f32d4666;
+}
+
+h2 {
+  font-size: clamp(20px, 5vw, 30px);
+}
+
+p {
+  line-height: 1.8;
+}
+
+.subtitulo {
+  color: #a9c9ff;
+  letter-spacing: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.texto-suave {
+  color: #cbd2e6;
+  max-width: 600px;
+}
+
+.boton {
+  position: relative;
+  z-index: 3;
+  padding: 15px 25px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(100deg, #ec243d, #a80e2d);
+  color: white;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 0 24px #f32d4644;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.boton:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 32px #f32d4688;
+}
+
+.boton-secundario {
+  background: #14213c;
+  border: 1px solid #3979d9;
+  box-shadow: none;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+/* INTRO DE LA PELÍCULA */
+
+#intro {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity .9s ease;
+}
+
+#intro video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.controles-intro {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+#intro.cerrando {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* CIUDAD Y LUCES */
+
+.ciudad {
+  position: absolute;
+  inset: auto 0 0;
+  height: 23%;
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  opacity: .45;
+  pointer-events: none;
+}
+
+.edificio {
+  width: 12%;
+  background: linear-gradient(#152544, #080a14);
+  border: 1px solid #24385b;
+  box-shadow: inset 0 0 15px #1a4c8740;
+}
+
+.edificio:nth-child(1) { height: 70%; }
+.edificio:nth-child(2) { height: 100%; }
+.edificio:nth-child(3) { height: 55%; }
+.edificio:nth-child(4) { height: 85%; }
+.edificio:nth-child(5) { height: 62%; }
+.edificio:nth-child(6) { height: 92%; }
+.edificio:nth-child(7) { height: 48%; }
+
+.particulas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particula {
+  position: absolute;
+  bottom: -20px;
+  width: 4px;
+  height: 4px;
+  background: #a9d5ff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #5aa5ff;
+  animation: subir linear infinite;
+}
+
+.spider {
+  font-size: clamp(70px, 17vw, 125px);
+  filter: drop-shadow(0 0 22px #e51f45aa);
+  animation: balanceo 3s ease-in-out infinite;
+  margin: 12px;
+}
+
+.linea {
+  width: 2px;
+  height: 45px;
+  background: linear-gradient(#c8e1ff, transparent);
+  margin: 0 auto;
+}
+
+/* CARTA */
+
+.carta-contenedor {
+  width: min(100%, 720px);
+  text-align: left;
+  padding: clamp(20px, 5vw, 40px);
+  border: 1px solid #ed40565e;
+  border-radius: 20px;
+  background: #0b0e1deF;
+  box-shadow: 0 0 45px #e523381b;
+  position: relative;
+  z-index: 2;
+}
+
+.carta-contenedor h2 {
+  color: #ff5368;
+  text-align: center;
+  line-height: 1.5;
+}
+
+#textoCarta {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.9;
+  color: #e3e8f5;
+  font-size: 15px;
+  min-height: 180px;
+}
+
+.carta-botones {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+/* PANTALLA FINAL */
+
+#finalRafael {
+  background:
+    radial-gradient(ellipse at top, #173d79, transparent 50%),
+    radial-gradient(ellipse at bottom, #72142770, transparent 55%),
+    #050711;
+}
+
+#finalRafael h1 {
+  background: linear-gradient(90deg, #fff, #ff5064, #75aaff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  overflow-wrap: anywhere;
+}
+
+.marco-foto {
+  width: min(68vw, 285px);
+  aspect-ratio: 3 / 4;
+  padding: 5px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ff263f, #267bff, #ff263f);
+  box-shadow: 0 0 35px #e5254570;
+  animation: flotar 3s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.marco-foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #101629;
+}
+
+.dedicatoria {
+  max-width: 450px;
+  color: #dfe7fa;
+}
+
+.firma {
+  color: #ff7887;
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin-top: 8px;
+}
+
+#soundBtn {
+  position: fixed;
+  right: 14px;
+  top: 14px;
+  z-index: 50;
+  border-radius: 30px;
+  border: 1px solid #5074a8;
+  background: #0d1428eF;
+  color: white;
+  padding: 10px 14px;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes balanceo {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-13px) rotate(5deg); }
+}
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes subir {
+  from { transform: translateY(0); opacity: 0; }
+  15% { opacity: .8; }
+  to { transform: translateY(-110vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .subtitulo { letter-spacing: 2px; }
+  .carta-contenedor { padding: 20px 16px; }
+  #textoCarta { font-size: 14px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO: COLOCA TU VIDEO EN LA MISMA CARPETA -->
+<div id="intro">
+  <video id="videoIntro" autoplay muted playsinline>
+    <source src="intro-spiderman.mp4" type="video/mp4">
+    Tu navegador no puede reproducir este video.
+  </video>
+
+  <div class="controles-intro">
+    <button class="boton boton-secundario" id="sonidoVideo">
+      ACTIVAR SONIDO 🔊
+    </button>
+    <button class="boton" id="saltarIntro">
+      CONTINUAR ⏭
+    </button>
+  </div>
+</div>
+
+<!-- AUDIO: AÑADE iris.mp3 SI TIENES UN ARCHIVO QUE PUEDAS USAR -->
+<audio id="musica" src="iris.mp3" loop preload="none"></audio>
+
+<button id="soundBtn" hidden>♫ Reproducir Iris</button>
+
+<!-- BIENVENIDA -->
+<section id="bienvenida" class="pantalla">
+  <div class="particulas" aria-hidden="true"></div>
+  <div class="ciudad" aria-hidden="true">
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+    <div class="edificio"></div>
+  </div>
+
+  <p class="subtitulo">Una historia especial • Una misión secreta</p>
+  <div class="spider" aria-hidden="true">🕷️</div>
+  <h1>RAFAEL</h1>
+  <p class="texto-suave">
+    Todo héroe tiene una historia...
+    y hoy quiero recordarte por qué tú eres uno de los míos.
+  </p>
+
+  <button class="boton" id="iniciarBtn">
+    INICIAR MISIÓN 🕸️
+  </button>
+</section>
+
+<!-- CARTA -->
+<section id="sorpresa" class="pantalla">
+  <div class="particulas" aria-hidden="true"></div>
+
+  <p class="subtitulo">Mensaje secreto desbloqueado</p>
+
+  <div class="carta-contenedor">
+    <h2> PARA MI SUPERHÉROE FAVORITO: RAFAEL </h2>
+    <div id="textoCarta" aria-live="polite"></div>
+
+    <div class="carta-botones">
+      <button class="boton boton-secundario" id="repetirBtn">
+        LEER DE NUEVO ↻
+      </button>
+      <button class="boton" id="finalBtn">
+        DESCUBRIR EL FINAL 
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- PANTALLA FINAL -->
+<section id="finalRafael" class="pantalla">
+  <div class="particulas" aria-hidden="true"></div>
+
+  <p class="subtitulo">MISIÓN COMPLETADA</p>
+  <h1>RAFAEL</h1>
+
+  <div class="marco-foto">
+    <img src="rafael.png" alt="Una foto de Rafael">
+  </div>
+
+  <h2>MI AMIGO, MI HÉROE 🕷️</h2>
+
+  <p class="dedicatoria">
+    Gracias por cada recuerdo, cada risa y cada momento compartido.
+    Nunca olvides lo increíble que eres, cuánto vales y que siempre
+    voy a creer en ti. La distancia no borra una amistad verdadera.
+    Sigue persiguiendo tus sueños, porque tienes muchísimo por lograr.
+  </p>
+
+  <p class="firma">CON CARIÑO, PARA RAFAEL </p>
+  <p>Spider-Man puede ser el héroe de Nueva York, pero tú tienes un lugar especial en mi universo. 🌎</p>
+
+  <button class="boton boton-secundario" id="volverBtn">
+    VOLVER A LA CARTA 💌
+  </button>
+</section>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const intro = $("intro");
+const video = $("videoIntro");
+const bienvenida = $("bienvenida");
+const sorpresa = $("sorpresa");
+const finalRafael = $("finalRafael");
+const textoCarta = $("textoCarta");
+const musica = $("musica");
+const soundBtn = $("soundBtn");
+
+let indiceLetra = 0;
+let temporizadorCarta = null;
+let musicaActiva = false;
+let introTerminada = false;
+
+const carta = `Querido Rafael:
+
+Si Spider-Man nos ha enseñado algo, es que los verdaderos héroes no son quienes tienen los poderes más increíbles, sino quienes, a pesar de las dificultades, siguen adelante. Y ¿sabes qué? Cuando pienso en alguien así, pienso en ti. ❤️
+
+Quizás no tengas telarañas para balancearte entre edificios ni un traje rojo y azul para salvar la ciudad, pero tienes algo mucho más especial: un corazón que vale muchísimo y una forma de ser que te hace único. Para mí, eres como Spider-Man, porque sé que eres capaz de levantarte, aprender y seguir avanzando incluso cuando las cosas se ponen difíciles.
+
+Quiero que sepas que estoy muy orgullosa de ti. Creo en tus sueños, en tus capacidades y en todo lo que puedes llegar a conseguir. Nunca permitas que un mal día te haga olvidar lo increíble que eres. Hasta los superhéroes tienen días difíciles, pero eso no les quita lo especiales. 🕸️
+
+Gracias por ser mi amigo, por cada momento que hemos compartido, por las risas, las conversaciones, las locuras y todos esos recuerdos que guardo con muchísimo cariño. La distancia no siempre nos permite estar cerca, pero eso no significa que nuestra amistad sea menos importante. Hay personas que, aunque no estén a nuestro lado todo el tiempo, ocupan un lugar enorme en nuestro corazón, y tú eres una de ellas.
+
+Quiero que recuerdes que no tienes que ser fuerte todo el tiempo ni fingir que todo está bien. Puedes equivocarte, cansarte, tener miedo y volver a intentarlo. Eso no te hace menos héroe; te hace humano. Y espero que nunca olvides que mereces recibir el mismo cariño, apoyo y comprensión que das a los demás.
+
+Si algún día dudas de ti mismo, recuerda que incluso Peter Parker tuvo que aprender a confiar en quién era. No necesitas demostrarle al mundo que eres perfecto. Solo sigue siendo tú, persigue tus sueños y nunca pierdas esa esencia que te hace ser Rafael.
+
+Si pudiera regalarte un superpoder, te regalaría la capacidad de verte con mis ojos, para que entendieras lo mucho que vales, lo orgullosa que estoy de ti y la alegría que me da tenerte en mi vida. También te regalaría una telaraña para que alcanzaras todos tus sueños y un sentido arácnido que te avisara cada vez que estuvieras olvidando lo increíble que eres. JAJAJA. 🕷️❤️
+
+Nunca olvides que los mejores héroes no siempre aparecen en las películas. A veces son personas reales que llegan a nuestra vida, crean recuerdos inolvidables y hacen que los días sean un poquito mejores simplemente siendo ellas mismas.
+
+Y TÚ, RAFAEL, ERES UNO DE ESOS HÉROES PARA MÍ. 
+
+Gracias por ser parte de mi historia. Deseo que cumplas tus metas, que nunca dejes de soñar y que, cuando mires hacia atrás, te sientas orgulloso de todo lo que has superado.
+
+Spider-Man puede ser el héroe de Nueva York, pero tú siempre tendrás un lugar especial en mi pequeño universo. 
+
+Gracias por ser mi mejor amigo, mi compañero de recuerdos y una persona tan especial en mi vida.
+
+NUNCA OLVIDES QUIÉN ERES, RAFAEL. EL MUNDO NECESITA PERSONAS COMO TÚ. 
+
+Con muchísimo cariño,
+Tu mejor amiga que siempre creerá en ti. `;
+
+function mostrarPantalla(pantalla) {
+  document.querySelectorAll(".pantalla").forEach((elemento) => {
+    elemento.classList.remove("activa");
+  });
+
+  pantalla.classList.add("activa");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function terminarIntro() {
+  if (introTerminada) return;
+  introTerminada = true;
+
+  video.pause();
+  intro.classList.add("cerrando");
+
+  setTimeout(() => {
+    intro.style.display = "none";
+    mostrarPantalla(bienvenida);
+  }, 900);
+}
+
+$("saltarIntro").addEventListener("click", terminarIntro);
+video.addEventListener("ended", terminarIntro);
+
+$("sonidoVideo").addEventListener("click", async () => {
+  video.muted = !video.muted;
+  $("sonidoVideo").textContent = video.muted
+    ? "ACTIVAR SONIDO 🔊"
+    : "SILENCIAR VIDEO 🔇";
+
+  if (!video.paused) return;
+
+  try {
+    await video.play();
+  } catch (error) {
+    console.log("Pulsa continuar para seguir con el regalo.");
+  }
+});
+
+video.addEventListener("error", () => {
+  $("sonidoVideo").textContent = "VIDEO NO DISPONIBLE";
+  $("saltarIntro").textContent = "CONTINUAR CON EL REGALO";
+});
+
+$("iniciarBtn").addEventListener("click", () => {
+  mostrarPantalla(sorpresa);
+  iniciarCarta();
+
+  soundBtn.hidden = false;
+  soundBtn.textContent = "♫ Reproducir Iris";
+});
+
+function iniciarCarta() {
+  clearInterval(temporizadorCarta);
+  indiceLetra = 0;
+  textoCarta.textContent = "";
+  $("repetirBtn").disabled = true;
+  $("finalBtn").disabled = true;
+
+  temporizadorCarta = setInterval(() => {
+    textoCarta.textContent += carta.charAt(indiceLetra);
+    indiceLetra++;
+
+    if (indiceLetra >= carta.length) {
+      clearInterval(temporizadorCarta);
+      $("repetirBtn").disabled = false;
+      $("finalBtn").disabled = false;
+    }
+  }, 28);
+}
+
+$("repetirBtn").addEventListener("click", iniciarCarta);
+
+$("finalBtn").addEventListener("click", () => {
+  clearInterval(temporizadorCarta);
+  mostrarPantalla(finalRafael);
+});
+
+$("volverBtn").addEventListener("click", () => {
+  mostrarPantalla(sorpresa);
+});
+
+soundBtn.addEventListener("click", async () => {
+  if (musicaActiva) {
+    musica.pause();
+    musicaActiva = false;
+    soundBtn.textContent = "♫ Reproducir Iris";
+    return;
+  }
+
+  try {
+    await musica.play();
+    musicaActiva = true;
+    soundBtn.textContent = "♫ Pausar Iris";
+  } catch (error) {
+    soundBtn.textContent = "No se encontró iris.mp3";
+    console.log("Añade iris.mp3 a la carpeta del regalo.");
+  }
+});
+
+// Genera partículas decorativas en las pantallas.
+document.querySelectorAll(".particulas").forEach((contenedor) => {
+  for (let i = 0; i < 24; i++) {
+    const particula = document.createElement("span");
+    particula.className = "particula";
+    particula.style.left = Math.random() * 100 + "%";
+    particula.style.animationDuration = (5 + Math.random() * 8) + "s";
+    particula.style.animationDelay = (Math.random() * 7) + "s";
+    particula.style.opacity = Math.random();
+    contenedor.appendChild(particula);
+  }
+});
+
+// Si el navegador no reproduce automáticamente el video,
+// el botón CONTINUAR siempre permite entrar al regalo.
+</script>
+</body>
+</html>
